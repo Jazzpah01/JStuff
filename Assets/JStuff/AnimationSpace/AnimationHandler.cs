@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace JStuff.AnimationSpace
@@ -37,7 +36,7 @@ namespace JStuff.AnimationSpace
             }
         }
 
-        public void SetAnimatorController(AnimatorController animatorController)
+        public void SetAnimatorController(RuntimeAnimatorController animatorController)
         {
             this.animator.runtimeAnimatorController = animatorController;
         }

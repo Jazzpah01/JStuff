@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using JStuff.Utilities;
+using JStuff.Collection;
 using JStuff.Randomness;
 using UnityEngine.UI;
 using System.IO;
