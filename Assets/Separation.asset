@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6726008d4edfeed44b81d274bdf3cf54, type: 3}
   m_Name: Separation
   m_EditorClassIdentifier: 
-  distance: 1
+  distance: 3

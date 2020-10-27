@@ -2,22 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColliderController : MonoBehaviour
+public static class ColliderController
 {
-    [SerializeField]
-    public List<string> flags;
-
     private static bool HasColliderFlag(Collider2D collier, string f)
     {
         GameObject go = collier.gameObject;
-        ColliderController co = go.GetComponent<ColliderController>();
+        CustomFlags co = go.GetComponent<CustomFlags>();
 
-        if (co == null || co.flags == null)
+        if (co == null)
         {
-            return false;throw new System.Exception("GameObject of collider doesn't have ColliderController!");
+            return false;
         }
 
-        return (co.flags.Contains(f)) ? true : false;
+        return co.HasFlag(f);
     }
 
     public static Collider2D[] OverlapBoxAllWithFlag(Vector2 point, Vector2 size, string flag)

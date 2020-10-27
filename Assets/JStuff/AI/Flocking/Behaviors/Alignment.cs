@@ -8,15 +8,15 @@ namespace JStuff.AI.Flocking
     public class Alignment : FlockingBehavior
     {
         public float range;
-        public override Vector2 VelocityChange(Boid[] flock, Transform[] context, Boid boid)
+        public override Vector2 VelocityChange(Flock flock, Boid boid, List<Transform> context)
         {
-            Vector2 v = Vector2.zero;
-            Boid[] bb = Flock.BoidsInRadius(flock, boid.transform.position, range);
+            Vector3 v = Vector2.zero;
+            List<Boid> bb = flock.BoidsInRadius(boid.transform.position, range);
             foreach (Boid b in bb)
             {
                 v += b.velocity;
             }
-            return v / bb.Length;
+            return v / bb.Count;
         }
     }
 }

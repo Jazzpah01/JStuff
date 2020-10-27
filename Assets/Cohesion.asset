@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b31e06a0d95ec6429f3e71195350b0b, type: 3}
   m_Name: Cohesion
   m_EditorClassIdentifier: 
-  range: 3
+  range: 2

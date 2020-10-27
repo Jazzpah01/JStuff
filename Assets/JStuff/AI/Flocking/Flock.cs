@@ -7,37 +7,46 @@ namespace JStuff.AI.Flocking
     public class Flock : MonoBehaviour
     {
         [SerializeField]
-        private WeightedBehavior[] behaviors;
+        private WeightedBehavior[] weightedBehaviors;
 
         //[SerializeField]
         //private WeightedBehavior behavior;
 
         [SerializeField]
-        private Boid[] boids;
+        private List<Boid> boids;
 
         [SerializeField]
         private float maxSpeed;
 
+        public List<Boid> Boids
+        {
+            get { return boids; }
+        }
+
         void Start()
         {
-            if (boids == null || boids.Length == 0)
+            boids = new List<Boid>();
+            if (boids == null || boids.Count == 0)
             {
-                boids = this.gameObject.GetComponentsInChildren<Boid>();
+                foreach (Boid b in this.gameObject.GetComponentsInChildren<Boid>())
+                {
+                    boids.Add(b);
+                }
             }
         }
 
-        void FixedUpdate()
+        void Update()
         {
             foreach(Boid boid in boids)
             {
                 Vector2 v = Vector2.zero;
         
-                foreach(WeightedBehavior b in behaviors)
+                foreach(WeightedBehavior b in weightedBehaviors)
                 {
-                    v += b.Behavior.VelocityChange(boids, b.Context, boid) * b.Weight;
+                    v += b.Behavior.VelocityChange(this, boid, b.Context) * b.Weight;
                 }
         
-                boid.velocity = v.normalized * maxSpeed * Time.fixedDeltaTime;
+                boid.velocity = v.normalized * maxSpeed;
             }
         
             foreach(Boid boid in boids)
@@ -46,13 +55,18 @@ namespace JStuff.AI.Flocking
             }
         }
 
+        public void SetContext(int index, List<Transform> context)
+        {
+            weightedBehaviors[index].SetContext(context);
+        }
 
 
-        public static (Boid, float) NearestBoid(Boid[] flock, Boid boid)
+
+        public (Boid, float) NearestBoid(Boid boid)
         {
             Boid retval = null;
             float distance = float.MaxValue;
-            foreach (Boid b in flock)
+            foreach (Boid b in boids)
             {
                 //float d = b.transform.position.magnitude - boid.transform.position.magnitude;
                 Vector2 v = b.transform.position - boid.transform.position;
@@ -67,15 +81,15 @@ namespace JStuff.AI.Flocking
             return (retval, distance);
         }
 
-        public static Boid[] BoidsInRadius(Boid[] flock, Vector2 point, float radius)
+        public List<Boid> BoidsInRadius(Vector2 point, float radius)
         {
             List<Boid> retval = new List<Boid>();
-            foreach (Boid boid in flock)
+            foreach (Boid boid in boids)
             {
                 if ((boid.transform.position - (Vector3)point).magnitude <= radius)
                     retval.Add(boid);
             }
-            return retval.ToArray();
+            return retval;
         }
     }
 }

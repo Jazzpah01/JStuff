@@ -7,7 +7,7 @@ namespace JStuff.AI.Flocking
     [CreateAssetMenu(menuName = "Assets/Flock/Behavior/Random")]
     public class RandomUrge : FlockingBehavior
     {
-        public override Vector2 VelocityChange(Boid[] flock, Transform[] context, Boid boid)
+        public override Vector2 VelocityChange(Flock flock, Boid boid, List<Transform> context)
         {
             float random = UnityEngine.Random.Range(0f, 260f);
             return new Vector2(Mathf.Cos(random), Mathf.Sin(random)).normalized;

@@ -9,9 +9,9 @@ namespace JStuff.AI.Flocking
     {
         public Vector2 targetOffset;
         public float range;
-        public override Vector2 VelocityChange(Boid[] flock, Transform[] context, Boid boid)
+        public override Vector2 VelocityChange(Flock flock, Boid boid, List<Transform> context)
         {
-            if (context == null || context.Length == 0)
+            if (context == null || context.Count == 0)
                 return Vector2.zero;
             Vector2 retval = Vector2.zero;
             Transform target = null;
