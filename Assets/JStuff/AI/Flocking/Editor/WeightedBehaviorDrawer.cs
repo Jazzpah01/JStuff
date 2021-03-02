@@ -24,13 +24,15 @@ namespace JStuff.AI.Flocking
             // Calculate rects
             var behaviorRect = new Rect(position.x, position.y, 140, position.height);
             var weightRect = new Rect(position.x + 145, position.y, 50, position.height);
-            var contextRect = new Rect(position.x + 200, position.y, position.width - 90, position.height);
+            var flockAsContextRect = new Rect(position.x + 145 + 50, position.y, 50, position.height);
+            //var contextRect = new Rect(position.x + 200, position.y, position.width - 90, position.height);
             //var contextRect = new Rect(position.x + 145+ 30+5, position.y, 30, position.height);
 
             // Draw fields - passs GUIContent.none to each so they are drawn without labels
             EditorGUI.PropertyField(behaviorRect, property.FindPropertyRelative("behavior"), GUIContent.none);
             EditorGUI.PropertyField(weightRect, property.FindPropertyRelative("weight"), GUIContent.none);
-            EditorGUI.PropertyField(contextRect, property.FindPropertyRelative("context"), true);
+            EditorGUI.PropertyField(flockAsContextRect, property.FindPropertyRelative("flockAsContext"), GUIContent.none);
+            //EditorGUI.PropertyField(contextRect, property.FindPropertyRelative("context"), true);
             //EditorGUILayout.PropertyField()
 
             //var list = serializedObject.FindProperty("ListTest");

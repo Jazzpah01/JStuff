@@ -14,8 +14,7 @@ public class FlockTest : MonoBehaviour
         List<Transform> context = new List<Transform>();
         foreach (Boid b in flock.GetComponentsInChildren<Boid>())
         {
-            context.Add(b.transform);
+            flock.AddContext(behaviorindex, b.transform);
         }
-        flock.SetContext(behaviorindex, context);
     }
 }

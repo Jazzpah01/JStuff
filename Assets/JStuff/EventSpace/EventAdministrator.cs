@@ -74,7 +74,6 @@ namespace JStuff.EventSpace
 
             if (eventDictionary[eventType.Val] == null)
                 throw new Exception("Empty delegate which is not removed.");
-            //Debug.Log("Executing event. Source =" + source + ". " + (source == null));
             eventDictionary[eventType.Val](this.source, data);
         }
     }

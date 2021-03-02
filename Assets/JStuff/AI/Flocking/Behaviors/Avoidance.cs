@@ -22,7 +22,6 @@ namespace JStuff.AI.Flocking
                     retval -= delta.normalized * range/delta.magnitude;
                 }
             }
-            Debug.Log(retval);
             return retval;
         }
     }

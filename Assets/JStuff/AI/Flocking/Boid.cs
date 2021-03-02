@@ -4,17 +4,22 @@ using UnityEngine;
 
 namespace JStuff.AI.Flocking
 {
-
     public class Boid : MonoBehaviour
     {
         public Vector3 velocity = new Vector3();
-        public void UpdatePosition()
+        public virtual void UpdatePosition()
         {
-            //Vector2 v = this.transform.position;
-            //v += velocity;
-            //this.transform.position = v;
             this.transform.position += velocity * Time.deltaTime;
-            this.transform.up = velocity;
+        }
+
+        public virtual void InitializeBoid()
+        {
+            throw new System.Exception("Method not implemented.");
+        }
+
+        public virtual void RemoveBoid()
+        {
+            throw new System.Exception("Method not implemented.");
         }
     }
 }
