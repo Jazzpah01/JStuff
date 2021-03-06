@@ -12,7 +12,8 @@ using JStuff.Collection;
 public class Body2d : MonoBehaviour
 {
     [SerializeField]
-    private Body2dData data;
+    public Body2dData data;
+    private Body2dData originalData;
     [SerializeField]
     private BoxCollider2D boxCollider;
     [SerializeField]
@@ -36,8 +37,6 @@ public class Body2d : MonoBehaviour
 
     private Vector2 oldPosition;
 
-    private List<Body2dFilter> filters;
-
     private int activeJackalFrames = 0;
 
     private int jumpInputBuffer = 0;
@@ -46,6 +45,9 @@ public class Body2d : MonoBehaviour
 
     private bool fall = false;
 
+    private List<IBodyFilter> filters = new List<IBodyFilter>();
+
+    public delegate void StateObserved(Body2d body);
 
     public bool GroundOnSpawn
     {
@@ -114,6 +116,44 @@ public class Body2d : MonoBehaviour
         get { return data.jumpHeight; }
     }
 
+    public void ApplyFilter(IBodyFilter filter)
+    {
+        for (int i = filters.Count-1; i >= 0; i--)
+        {
+            filters[i].ApplyIvertedFilter(this);
+        }
+
+        data = Instantiate(originalData);
+
+        filters.Add(filter);
+
+        filters.Sort();
+
+        for (int i = 0; i < filters.Count; i++)
+        {
+            filters[i].ApplyFilter(this);
+        }
+    }
+
+    public void RemoveFilter(IBodyFilter filter)
+    {
+        for (int i = filters.Count - 1; i >= 0; i--)
+        {
+            filters[i].ApplyIvertedFilter(this);
+        }
+
+        data = Instantiate(originalData);
+
+        filters.Remove(filter);
+
+        filters.Sort();
+
+        for (int i = 0; i < filters.Count; i++)
+        {
+            filters[i].ApplyFilter(this);
+        }
+    }
+
     public void AddVelocity(string key, Vector2 velocity)
     {
         velocityStack.Add(key, velocity);
@@ -157,14 +197,16 @@ public class Body2d : MonoBehaviour
     void Start()
     {
         Cleanup();
+
+        originalData = data;
+        data = Instantiate(originalData);
+
         data.initialGravityAcceleration = GravetyAcceleration;
 
         if (boxCollider == null)
             boxCollider = gameObject.GetComponent<BoxCollider2D>();
         if (data.groundOnSpawn && boxCollider == null)
             throw new System.Exception("Cannot ground a body that has no box collider!");
-
-        filters = new List<Body2dFilter>();
 
         // Ground Body!
         if (!data.groundOnSpawn)
@@ -237,22 +279,6 @@ public class Body2d : MonoBehaviour
         }
     }
 
-    public void ApplyFilter(Body2dFilter filter)
-    {
-        if (!filters.Contains(filter) || filter.stackable)
-            filters.Add(filter);
-    }
-
-    public void ClearFilters()
-    {
-        filters = new List<Body2dFilter>();
-    }
-
-    public void ClearFilters(Body2dFilter filter)
-    {
-        filters.RemoveAll(f => f == filter);
-    }
-
     void FixedUpdate()
     {
         // Jump
@@ -299,36 +325,44 @@ public class Body2d : MonoBehaviour
         velocity += velocityStack.MultiPop(new Vector2());
 
         // Applying gravety acceleration
-        velocity.y += data.gravityAcceleration * Time.fixedDeltaTime;
-        if ((descending && data.gravityAcceleration < 0) || (ascending && data.gravityAcceleration > 0))
+        if (data.gravityAcceleration != 0)
         {
-            if (data.fallOnDescend)
-                FallInput(false);
-            velocity.y += data.gravityAcceleration * Time.fixedDeltaTime * (data.GMDescend - 1);
-        }
-        if (fall)
-            velocity.y += data.gravityAcceleration * Time.fixedDeltaTime * (data.GMFall - 1);
-
-        // Apply movement
-        if (horizontalInput != 0)
-        {
-            if ((Grounded && data.gravityAcceleration < 0) || (Ceiled && data.gravityAcceleration > 0))
+            velocity.y += data.gravityAcceleration * Time.fixedDeltaTime;
+            if ((descending && data.gravityAcceleration < 0) || (ascending && data.gravityAcceleration > 0))
             {
-                velocity.x = Mathf.MoveTowards(velocity.x, data.speed * horizontalInput, data.walkAcceleration * Time.fixedDeltaTime);
-            } else
-            {
-                velocity.x = Mathf.MoveTowards(velocity.x, data.speed * horizontalInput, data.airAcceleration * Time.fixedDeltaTime);
+                if (data.fallOnDescend)
+                    FallInput(false);
+                velocity.y += data.gravityAcceleration * Time.fixedDeltaTime * (data.GMDescend - 1);
             }
-            
+            if (fall)
+                velocity.y += data.gravityAcceleration * Time.fixedDeltaTime * (data.GMFall - 1);
         }
-        else
+        
+        // Apply movement
+        if (horizontalInput != 0 &&
+                    !(data.speed * horizontalInput < velocity.x && horizontalInput > 0) &&
+                    !(data.speed * horizontalInput > velocity.x && horizontalInput < 0)) // BUG: should be able to airaccelerate
         {
             if ((Grounded && data.gravityAcceleration < 0) || (Ceiled && data.gravityAcceleration > 0))
             {
-                velocity.x = Mathf.MoveTowards(velocity.x, 0, data.groundDeceleration * Time.fixedDeltaTime);
+                if (data.walkAcceleration != 0)
+                    velocity.x = Mathf.MoveTowards(velocity.x, data.speed * horizontalInput, data.walkAcceleration * Time.fixedDeltaTime);
             } else
             {
-                velocity.x = Mathf.MoveTowards(velocity.x, 0, data.airAcceleration * Time.fixedDeltaTime);
+                if (data.airAcceleration != 0)
+                    velocity.x = Mathf.MoveTowards(velocity.x, data.speed * horizontalInput, data.airAcceleration * Time.fixedDeltaTime);
+            }
+        }
+        else // BUG
+        {
+            if ((Grounded && data.gravityAcceleration < 0) || (Ceiled && data.gravityAcceleration > 0))
+            {
+                if (data.groundDeceleration != 0)
+                    velocity.x = Mathf.MoveTowards(velocity.x, 0, data.groundDeceleration * Time.fixedDeltaTime);
+            } else
+            {
+                if (data.airAcceleration != 0)
+                    velocity.x = Mathf.MoveTowards(velocity.x, 0, data.airAcceleration * Time.fixedDeltaTime);
             }
         }
 

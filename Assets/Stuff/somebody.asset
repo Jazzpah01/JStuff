@@ -15,7 +15,7 @@ MonoBehaviour:
   ColliderFlags:
   - wall
   PlatformFlags: []
-  speed: 9
+  speed: 7
   walkAcceleration: 65
   airAcceleration: 25
   groundDeceleration: 60
@@ -27,7 +27,7 @@ MonoBehaviour:
   dropOnFall: 0
   fallOnDescend: 1
   horizontalBounce: 0
-  verticalBounce: 0.1
+  verticalBounce: 0.01
   jackalFrames: 5
   inputBufferJump: 5
   groundOnSpawn: 0

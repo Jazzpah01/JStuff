@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f50bc9613e708a44954aaef9dc9fd0f, type: 3}
+  m_Name: running
+  m_EditorClassIdentifier: 
+  speed: 1.2
+  walkAcceleration: 1.5
+  airAcceleration: 1
+  groundDeceleration: 1
+  jumpHeight: 0.8
+  gravityAcceleration: 1
+  GMDescend: 1
+  GMFall: 1
+  horizontalBounce: 1
+  verticalBounce: 1
+  pivot: 4
+  colliderXMultiplier: 0.2
+  colliderYMultiplier: 1
